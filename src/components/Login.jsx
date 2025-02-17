@@ -1,6 +1,8 @@
 import Header from "@/components/Header"
 import { useRef, useState } from "react"
-import { validateUserEmail, validateUserPassword } from "@/utils/utils"
+import { validateEmailandPassword } from "@/utils/utils"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword  } from "firebase/auth";
+import { auth } from "@/utils/firebase";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true)
@@ -10,26 +12,43 @@ const Login = () => {
   const passwordRef = useRef(null)
   const inputBoxClassName = "h-14 w-full leading-6 pt-6 px-4 pb-4 border text-base rounded"
   const handleSignIn = () => {
-    const isValidEmail = validateUserEmail(emailRef.current.value)
-    const isValidPasword = validateUserPassword(passwordRef.current.value)
+    const errorMessage = validateEmailandPassword(emailRef.current.value, passwordRef.current.value)
     setErrorMsg('')
-    if (!isValidEmail && !isValidPasword) {
-      setErrorMsg('Invalid email id and password')
-      console.log('Invalid email and password');
+    if (errorMessage) {
+      setErrorMsg(errorMessage)
       return
     }
-    if (!isValidEmail) {
-      setErrorMsg('Invalid email id')
-      console.log('Invalid email');
-      return
-    }
-    if (!isValidPasword) {
-      setErrorMsg('Invalid email password')
-      console.log('Invalid password');
-      return
-    }
-
+    handleAuthentication(emailRef.current.value, passwordRef.current.value)
   }
+
+  const handleAuthentication = function (email, password) {
+    if (!isLogin) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => { 
+          const user = userCredential.user;
+          return user
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage)
+          setErrorMsg(errorMessage)
+        });
+    } else {
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {     
+          const user = userCredential.user;
+          console.log(user);
+          
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMsg(errorMessage)
+        });
+    }
+  }
+
   return (
     <div className="login relative">
       <Header />

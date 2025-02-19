@@ -3,8 +3,10 @@ import { useRef, useState } from "react"
 import { validateEmailandPassword } from "@/utils/utils"
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword  } from "firebase/auth";
 import { auth } from "@/utils/firebase";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate()
   const [isLogin, setIsLogin] = useState(true)
   const [errorMsg, setErrorMsg] = useState("")
   
@@ -38,6 +40,7 @@ const Login = () => {
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {     
           const user = userCredential.user;
+          navigate('/browse')
           console.log(user);
           
         })

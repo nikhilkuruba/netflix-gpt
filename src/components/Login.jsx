@@ -1,15 +1,19 @@
 import Header from "@/components/Header"
 import { useRef, useState } from "react"
 import { validateEmailandPassword } from "@/utils/utils"
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword  } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile  } from "firebase/auth";
 import { auth } from "@/utils/firebase";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser, removeUser } from "@/store/userSlice";
 
 const Login = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [isLogin, setIsLogin] = useState(true)
   const [errorMsg, setErrorMsg] = useState("")
   
+  const userNameRef = useRef(null)
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
   const inputBoxClassName = "h-14 w-full leading-6 pt-6 px-4 pb-4 border text-base rounded"
@@ -28,6 +32,15 @@ const Login = () => {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => { 
           const user = userCredential.user;
+          updateProfile(user, {
+            displayName: userNameRef.current.value, photoURL: ""
+          }).then(() => {
+            const { uid, email, displayName, photoURL } = auth.currentUser;
+            dispatch(addUser({ uid, email, displayName, photoURL }))
+            navigate('/browse')  
+          }).catch((error) => {
+            console.log(error)
+          });
           return user
         })
         .catch((error) => {
@@ -61,7 +74,7 @@ const Login = () => {
       <div className="login-form-container bottom-0 fixed left-1/2 transform  -translate-x-1/2 overflow-auto bg-black/70 rounded-[4px] px-17 pt-12">
       <h1 className="text-white !text-[2rem] font-bold mb-6 text-left font-bold">{isLogin ? 'Sign In' : 'Sign up'}</h1>
       <form onSubmit={(e) => e.preventDefault()} className="login-form flex flex-col gap-4 w-80" action="">
-        {!isLogin && (<input type="text" name="name" placeholder="User name" className={inputBoxClassName} />)}
+        {!isLogin && (<input ref={userNameRef} type="text" name="name" placeholder="User name" className={inputBoxClassName} />)}
         <input ref={emailRef} type="text" name="email" placeholder="Email address" className={inputBoxClassName} />
         <input ref={passwordRef} type="password" name="password" placeholder="Password" className={inputBoxClassName} />
         {errorMsg && <p className="text-red-500 italic">{errorMsg}</p>}

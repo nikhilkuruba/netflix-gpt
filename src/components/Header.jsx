@@ -62,7 +62,7 @@ const Header = () => {
       { user && <div className="flex items-center space-x-4">
 
         <img className="rounded-[0.25rem]" src={user?.photoURL || "https://occ-0-1492-3663.1.nflxso.net/dnm/api/v6/vN7bi_My87NPKvsBoib006Llxzg/AAAABVC11njRAccYpkkyuBsUHtOOKYFGkwSR5W17rS9AcsA928D5_xgxoWHbUZESUThei8tFV3So6eTfjsvn0RRqN3kuxbq7KCI.png?r=59d"} alt="user icon" />
-        <button className="h-10 px-4 py-2" onClick={handleLogout}>Log out</button>
+        <button className="h-10 px-4 py-2 cursor-pointer" onClick={handleLogout}>Log out</button>
       </div>}
     </div>
   )

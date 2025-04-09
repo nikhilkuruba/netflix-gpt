@@ -11,10 +11,11 @@ const MainContainer = () => {
   
   const { original_title, overview, id } = displayMovie
   return (
-    <>
-    <VideoTitle title={original_title} overview={overview}  />
-    <VideoBackgroud movieId={id} />
-    </>
+    <div className='main-container relative w-full h-[90vh] overflow-hidden'>
+      <VideoBackgroud className="absolute top-0 left-0 z-[-1] w-full h-full object-cover" movieId={id} />
+      <div className="trailer-overlay h-full w-full absolute top-0 left-0 z-1 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
+      <VideoTitle className="absolute top-[50%] left-[5%] text-white z-2 max-w-[40%] translate-y-[-50%]" title={original_title} overview={overview}  />
+    </div>
   )
 }
 export default MainContainer
